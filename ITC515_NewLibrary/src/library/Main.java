@@ -100,7 +100,7 @@ public class Main implements IMainListener {
 		//create a member with maxed out unpaid fines
 		member[2].addFine(10.0f);
 		
-		//create a member with maxed out loans
+		//create a member with maxed out loans. 
 		for (int i=2; i<7; i++) {
 			ILoan loan = loanDAO.createLoan(member[3], book[i]);
 			loanDAO.commitLoan(loan);
