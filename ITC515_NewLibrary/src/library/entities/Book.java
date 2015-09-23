@@ -47,24 +47,45 @@ public class Book implements IBook{
 		if (state == EBookState.ON_LOAN){
 			state = (damaged) ? EBookState.DAMAGED : EBookState.AVAILABLE; loan = null;
 			}
+		else
+			throw new RuntimeException ("");
 		}
 	public void lose(){
+		if (state == EBookState.ON_LOAN){
+			state = EBookState.LOST;
+		}
+		else
+			throw new RuntimeException ("");
 		
-	}
+	} 
 	public void repair(){
+		if (state == EBookState.DAMAGED){
+			state = EBookState.AVAILABLE;
+		}
+		else
+			throw new RuntimeException ("");
 	}
 	
 	public void dispose(){
+		if (state == EBookState.AVAILABLE || state == EBookState.DAMAGED || state == EBookState.LOST)
+			state = EBookState.DISPOSED;
+		else
+			throw new RuntimeException("");
 	}
 	public EBookState getState(){
+		return state; 
 	}
 	public String getAuthor(){
+		return author; 
 	}
 	public String getTitle(){
+		return title; 
 	}
 	public String getCallNumber(){
+		return callNumber;
 	}
 	public int getID(){
+		return id; 
 		
 	}
 	
