@@ -23,6 +23,7 @@ public class BookDAO implements IBookDAO{
 	}
 	
 	public IBook addBook(String author, String Title, String callNumber){
+		
 		IBook book = helper.makeBook(author, Title, callNumber, nextID++);
 		map.add(book);
 		return book;
@@ -32,13 +33,28 @@ public class BookDAO implements IBookDAO{
 	
 	public IBook getBookByID(int id){
 		
+		for (IBook book : map)
+			if (book.getID() == id)
+				return book;
+		
+		return null; 
+		
 	}
 	
 	public List<IBook> listBooks(){
+		return map;
 		
 	}
 	
 	public List<IBook> findBooksByAuthor(String author){
+		List<IBook> result = new ArrayList<IBook>();
+		
+		for (IBook book : map)
+			
+			if (author.compareTo(book.getAuthor()) == 0)
+				result.add(book);
+		
+		return result;
 		
 	}
 	
