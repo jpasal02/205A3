@@ -11,7 +11,7 @@ public class Book implements IBook{
 	private String author; 
 	private String title; 
 	private String callNumber;  
-	private int id; 
+	private int bookID; 
 	private ILoan loan; 
 	private EBookState state; 
 
@@ -27,6 +27,11 @@ public class Book implements IBook{
 			throw new IllegalArgumentException ("Error: Call Number");
 		if(bookID <= 0)
 			throw new IllegalArgumentException ("Error: Book ID");
+		
+		this.author = author;
+		this.title = title; 
+		this.callNumber = callNumber;
+		this.bookID = bookID;
 	}
 	
 	public void borrow(ILoan loan){
@@ -85,9 +90,10 @@ public class Book implements IBook{
 		return callNumber;
 	}
 	public int getID(){
-		return id; 
+		return bookID; 
 		
 	}
+
 	
 		
 	
