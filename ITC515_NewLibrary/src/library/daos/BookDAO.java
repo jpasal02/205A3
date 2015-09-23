@@ -47,21 +47,34 @@ public class BookDAO implements IBookDAO{
 	}
 	
 	public List<IBook> findBooksByAuthor(String author){
-		List<IBook> result = new ArrayList<IBook>();
+		List<IBook> returns = new ArrayList<IBook>();
 		
 		for (IBook book : map)
-			
 			if (author.compareTo(book.getAuthor()) == 0)
-				result.add(book);
+				returns.add(book);
 		
-		return result;
+		return returns;
 		
 	}
 	
 	public List<IBook> findBooksByTitle(String title){
+		List<IBook> returns = new ArrayList<IBook>();
+		
+		for (IBook book : map)
+			if (title.compareTo(book.getTitle()) == 0)
+				returns.add(book);
+		
+		return returns;
 		
 	}
 	public List<IBook> findBooksByAuthorTitle(String author, String title){
+		List<IBook> returns = new ArrayList<IBook>();
+		
+		for (IBook book : map)
+			if (title.compareTo(book.getTitle()) == 0 && author.compareTo(book.getAuthor()) == 0)
+				returns.add(book);
+		return returns;
+				
 		
 	}
 
