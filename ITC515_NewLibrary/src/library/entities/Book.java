@@ -36,12 +36,21 @@ public class Book implements IBook{
 	
 	public void borrow(ILoan loan){
 		
-		if (state == EBookState.AVAILABLE){
+		if(loan == null)
+			throw new IllegalArgumentException ("");
+		if (state != EBookState.AVAILABLE)
+			throw new RuntimeException ("");
+		
+		
 			state = EBookState.ON_LOAN;
 			this.loan = loan;
 	}
-	else
-			throw new RuntimeException ("");
+
+	
+	public EBookState isAvailable()
+	{
+		this.setState(isAvailable());
+		return EBookState.AVAILABLE;
 	}
 	
 	public ILoan getLoan(){	
@@ -49,11 +58,12 @@ public class Book implements IBook{
 		
 	}
 	public void returnBook (boolean damaged){	
-		if (state == EBookState.ON_LOAN){
+		if (state != EBookState.ON_LOAN)
+			throw new RuntimeException ("");
+		{
 			state = (damaged) ? EBookState.DAMAGED : EBookState.AVAILABLE; loan = null;
 			}
-		else
-			throw new RuntimeException ("");
+			
 		}
 	public void lose(){
 		if (state == EBookState.ON_LOAN){
@@ -96,7 +106,7 @@ public class Book implements IBook{
 	}
 
 	@Override
-	public void setState(EBookState onLoan) {
+	public void setState(EBookState state) {
 		this.state = state;
 		
 	}
