@@ -22,7 +22,7 @@ public class BookTestings {
 	
 	@Before
 	public void setup() throws Exception{
-	BookTesting = new Book(author, title, Num, 1 );
+	BookTesting = new Book(author, title, Num, 1);
 	}
 	
 	@Test
@@ -44,12 +44,17 @@ public class BookTestings {
 	public void testGetID() {
 		assertEquals(1, BookTesting.getID());
 	}
-	@Test 
-	public void testborrow(){
-		ILoan testBorrowBook = mock(ILoan.class);
+	@Test
+	public void testborrow() throws Exception {
+		ILoan book = mock(ILoan.class);
 		
-		//assertEquals(author, title, Num, 1 );
-	}
+		Book test = new Book("author","title","no.",2);
+		
+		when(book.getBook()).thenReturn(test);
+		when(book.isOverDue()).thenReturn(false);
+		
+		assertEquals(book.getBook() , test);
+		}
 	
 	public void setState(EBookState state)
 	{
@@ -58,6 +63,7 @@ public class BookTestings {
 	
 	@Test
 	public void testGetLoan(){
+		
 		IBook testGetLoan = mock(IBook.class);
 		
 		testGetLoan.setState(EBookState.ON_LOAN);
@@ -84,7 +90,7 @@ public class BookTestings {
 		
 		test.setState(EBookState.ON_LOAN);
 		
-//		when(testLose.getBook()).thenReturn(test);
+		when(testLose.getBook()).thenReturn(test);
 		
 		
 		
