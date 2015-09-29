@@ -1,7 +1,7 @@
 package library.daos;
 
-import java.awt.print.Book;
 
+import library.entities.Book;
 import library.interfaces.daos.IBookHelper;
 import library.interfaces.entities.IBook;
 
@@ -11,7 +11,5 @@ public class BookHelper implements IBookHelper {
 		return new Book(author, title, callNumber, id);
 		
 	}
-	
-	returns a new book with an id specified by id
 
 }
