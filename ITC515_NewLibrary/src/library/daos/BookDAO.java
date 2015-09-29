@@ -17,7 +17,7 @@ public class BookDAO implements IBookDAO{
 	
 	public BookDAO (IBookHelper helper){
 		if (helper == null)
-			throw new IllegalArgumentException ("Error: Helper");
+			throw new IllegalArgumentException ("Error: (Helper)");
 	
 		
 	}

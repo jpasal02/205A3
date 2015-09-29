@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import library.interfaces.entities.EBookState;
 import library.interfaces.entities.ILoan;
 
+import static org.mockito.Mockito.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,5 +43,13 @@ public class BookTestings {
 	public void testGetID() {
 		assertEquals(1, BookTesting.getID());
 	}
+	@Test 
+	public void testborrow(){
+		ILoan testBorrowBook = mock(ILoan.class);
+		
+		
+		assertEquals(author, title, Num, 1 );
+	}
+		
 
 }
