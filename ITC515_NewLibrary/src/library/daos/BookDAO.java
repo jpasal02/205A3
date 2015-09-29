@@ -1,6 +1,7 @@
 package library.daos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,8 @@ public class BookDAO implements IBookDAO{
 		if (helper == null)
 			throw new IllegalArgumentException ("Error: (Helper)");
 	
-		
+		this.helper = helper;
+		nextID = 1;
 	}
 	
 	public IBook addBook(String author, String Title, String callNumber){
