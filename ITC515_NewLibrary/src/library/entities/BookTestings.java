@@ -15,8 +15,6 @@ public class BookTestings {
 	private String author = "author"; 
 	private String title = "title";
 	private String Num = "callNumber";
-	private int bookID = 1;
-	private EBookState state;
 	
 
 	private static Book BookTesting;
@@ -60,20 +58,12 @@ public class BookTestings {
 	}
 	@Test
 	public void testborrow() throws Exception {
-		ILoan book = mock(ILoan.class);
-		
-		Book test = new Book("author","title","no.",2);
 		
 		when(mockLoan.getBook()).thenReturn(testingBook);
-		when(book.isOverDue()).thenReturn(false);
+		when(mockLoan.isOverDue()).thenReturn(false);
 		
-		assertEquals(book.getBook() , test);
+		assertEquals(mockLoan.getBook(), testingBook);
 		}
-	
-	public void setState(EBookState state)
-	{
-		this.state = state;
-	}
 	
 	@Test
 	public void testGetLoan(){
@@ -116,32 +106,31 @@ public class BookTestings {
 	
 	@Test 
 	public void testLose(){
-		ILoan testLose = mock (ILoan.class);
-		Book test = new Book("author","title","no.",2);
-		
-		test.setState(EBookState.ON_LOAN);
-		
-		when(testLose.getBook()).thenReturn(test);
 		
 		
+		testingBook.setState(EBookState.LOST);
 		
-		assertEquals(test.getState(), EBookState.ON_LOAN);
+		when(mockLoan.getBook()).thenReturn(testingBook);
 		
-//		assertEquals(testLose.getBook(), test);
+		assertEquals(testingBook.getState(), EBookState.LOST);
+		
 	}
 	@Test
 	public void repair(){
 		
-//		
-//		assertEquals(EBookState.AVAILABLE).thenReturn.getState();
-//		damagedBook.repair();
+		testingBook.setState(EBookState.DAMAGED);
+		
+		assertEquals(testingBook.getState(), EBookState.DAMAGED);
+		testingBook.repair();
 	}
 	@Test
 	public void dispose(){
+		testingBook.setState(EBookState.DISPOSED);
+		
+		assertEquals(testingBook.getState(), EBookState.DISPOSED);
 		
 		
 	}
-	
 	//Exception Testing
 	
 	@Test
@@ -327,9 +316,38 @@ public class BookTestings {
 	}
 	
 	@Test
-	public void testDisposeBookDisposed()
+	public void testDisposeBookAvailable()
 	{		
-		testingBook.setState(EBookState.DISPOSED);
+		testingBook.setState(EBookState.AVAILABLE);
+		try
+		{
+			testingBook.dispose();
+			fail("Runtime Exception");
+		}
+		catch (RuntimeException e)
+		{
+			assertTrue(true);
+		}
+	}
+	@Test
+	public void testDisposeBookDamaged()
+	{		
+		testingBook.setState(EBookState.DAMAGED);
+		try
+		{
+			testingBook.dispose();
+			fail("Runtime Exception");
+		}
+		catch (RuntimeException e)
+		{
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void testDisposeBookLost()
+	{		
+		testingBook.setState(EBookState.LOST);
 		try
 		{
 			testingBook.dispose();

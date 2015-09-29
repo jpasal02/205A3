@@ -67,7 +67,7 @@ public class Book implements IBook{
 		}
 	public void lose(){
 		if (state == EBookState.ON_LOAN){
-			state = EBookState.LOST;
+			this.state = EBookState.LOST;
 		}
 		else
 			throw new RuntimeException ("");
@@ -75,17 +75,18 @@ public class Book implements IBook{
 	} 
 	public void repair(){
 		if (state == EBookState.DAMAGED){
-			state = EBookState.AVAILABLE;
+			this.state = EBookState.AVAILABLE;
 		}
 		else
 			throw new RuntimeException ("");
 	}
 	
 	public void dispose(){
-		if (state == EBookState.AVAILABLE || state == EBookState.DAMAGED || state == EBookState.LOST)
-			state = EBookState.DISPOSED;
-		else
+		if (state != EBookState.AVAILABLE || state != EBookState.DAMAGED || state != EBookState.LOST)
 			throw new RuntimeException("");
+		
+			this.state = EBookState.DISPOSED;
+			
 	}
 	public EBookState getState(){
 		return state; 
