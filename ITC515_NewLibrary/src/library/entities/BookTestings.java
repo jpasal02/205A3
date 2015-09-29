@@ -73,7 +73,24 @@ public class BookTestings {
 		
 		when(testReturn.getBook()).thenReturn(test);
 		
+		assertEquals(testReturn.getBook() , test);
 		
+	}
+	
+	@Test 
+	public void testLose(){
+		ILoan testLose = mock (ILoan.class);
+		Book test = new Book("author","title","no.",2);
+		
+		test.setState(EBookState.ON_LOAN);
+		
+//		when(testLose.getBook()).thenReturn(test);
+		
+		
+		
+		assertEquals(test.getState(), EBookState.ON_LOAN);
+		
+//		assertEquals(testLose.getBook(), test);
 	}
 	
 		

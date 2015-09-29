@@ -95,6 +95,12 @@ public class Book implements IBook{
 		
 	}
 
+	@Override
+	public void setState(EBookState onLoan) {
+		this.state = state;
+		
+	}
+
 	
 		
 	
