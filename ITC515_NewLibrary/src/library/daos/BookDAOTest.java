@@ -40,12 +40,12 @@ public class BookDAOTest {
 	@Test
 	public void testBookDAOAddBook()
 	{
-//			Book book = new Book("Bob Jones","Subject","123456",4);
+			Book book = new Book("Bob Jones","Subject","123456",4);
 //
-//			this.mockBook = testingBook;
-//			mockBook.addBook("Bob Jones","Subject","123456");
+			
+			mockBook.addBook("Bob Jones","Subject","123456");
 
-			assertEquals(mockBook.addBook("Bob Jones","Subject","123456"), testingBook);
+			assertEquals(mockBook.addBook("Bob Jones","Subject","123456"), book);
 		
 	}
 	

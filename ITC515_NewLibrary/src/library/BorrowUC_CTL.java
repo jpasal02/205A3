@@ -56,7 +56,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 	public void initialise() {
 		previous = display.getDisplay();
-		display.setDisplay((JPanel) ui, "Borrow UI");		
+		display.setDisplay((JPanel) ui, "Borrow UI");	
+		
 	}
 	
 	public void close() {
@@ -65,6 +66,9 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	@Override
 	public void cardSwiped(int memberID) {
+		this.reader.setEnabled(state == EBorrowState.CREATED);
+		
+		
 		throw new RuntimeException("Not implemented yet");
 	}
 	
@@ -72,12 +76,16 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 	@Override
 	public void bookScanned(int barcode) {
-		throw new RuntimeException("Not implemented yet");
+		this.reader.setEnabled(state == EBorrowState.SCANNING_BOOKS);
+		
 	}
 
 	
 	private void setState(EBorrowState state) {
-		throw new RuntimeException("Not implemented yet");
+		this.reader.setEnabled(state == EBorrowState.CREATED);
+		this.scanner.setEnabled(state == EBorrowState.SCANNING_BOOKS);
+		this.state = state; 
+		
 	}
 
 	@Override

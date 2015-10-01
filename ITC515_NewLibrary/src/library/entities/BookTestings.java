@@ -15,7 +15,6 @@ public class BookTestings {
 	private String author = "author"; 
 	private String title = "title";
 	private String Num = "callNumber";
-	
 
 	private static Book BookTesting;
 
