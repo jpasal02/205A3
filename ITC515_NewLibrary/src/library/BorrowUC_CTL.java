@@ -11,7 +11,6 @@ import library.interfaces.IBorrowUIListener;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
-import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
@@ -66,7 +65,22 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	@Override
 	public void cardSwiped(int memberID) {
-		this.reader.setEnabled(state == EBorrowState.CREATED);
+		
+		state.equals(EBorrowState.INITIALIZED); 
+		borrower = memberDAO.getMemberByID(memberID);
+		
+		if (borrower == null){
+			ui.displayErrorMessage("field must be a postivie int");
+			return;
+		}
+		if (borrower.hasOverDueLoans()) {
+			state.equals(EBorrowState.BORROWING_RESTRICTED);
+			ui.displayErrorMessage("Memeber is restricted");
+		}
+		else{
+			state.equals(EBorrowState.SCANNING_BOOKS);
+		}
+		
 		
 		
 		throw new RuntimeException("Not implemented yet");
@@ -76,15 +90,33 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 	@Override
 	public void bookScanned(int barcode) {
-		this.reader.setEnabled(state == EBorrowState.SCANNING_BOOKS);
+		
+	state.equals(EBorrowState.SCANNING_BOOKS);
 		
 	}
 
 	
 	private void setState(EBorrowState state) {
-		this.reader.setEnabled(state == EBorrowState.CREATED);
-		this.scanner.setEnabled(state == EBorrowState.SCANNING_BOOKS);
-		this.state = state; 
+		this.state = state;
+		
+		if (state == EBorrowState.INITIALIZED){
+			reader.setEnabled(true);
+			scanner.setEnabled(false);
+		}
+		if (state == EBorrowState.SCANNING_BOOKS){
+			reader.setEnabled(false);
+			scanner.setEnabled(true);
+		}
+		if (state == EBorrowState.BORROWING_RESTRICTED || state == state.CONFIRMING_LOANS){
+			reader.setEnabled(false);
+			scanner.setEnabled(false);
+		}
+		else {
+			reader.setEnabled(true);
+			scanner.setEnabled(true);
+			
+			
+		}
 		
 	}
 
@@ -100,12 +132,16 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	@Override
 	public void loansConfirmed() {
-		throw new RuntimeException("Not implemented yet");
+		while (state == EBorrowState.CONFIRMING_LOANS && loanList.size() > 0 && loanList.size() < 5){
+			
+		}
 	}
 
 	@Override
 	public void loansRejected() {
-		throw new RuntimeException("Not implemented yet");
+		while (state == EBorrowState.CONFIRMING_LOANS && loanList.size() > 0){
+		
+		}
 	}
 
 	private String buildLoanListDisplay(List<ILoan> loans) {
