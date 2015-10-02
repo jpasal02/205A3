@@ -11,6 +11,7 @@ import library.interfaces.IBorrowUIListener;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
+import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
@@ -20,7 +21,6 @@ import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import library.interfaces.hardware.IScannerListener;
-import library.panels.borrow.SwipeCardPanel;
 
 public class BorrowUC_CTL implements ICardReaderListener, 
 									 IScannerListener, 
@@ -49,16 +49,25 @@ public class BorrowUC_CTL implements ICardReaderListener,
 			IPrinter printer, IDisplay display,
 			IBookDAO bookDAO, ILoanDAO loanDAO, IMemberDAO memberDAO ) {
 
-		this.display = display;
+		this.bookDAO = bookDAO;
+		this.memberDAO= memberDAO;
+		this.loanDAO = loanDAO;
+		
 		this.ui = new BorrowUC_UI(this);
+		this.reader = reader;
+		reader.addListener(this);
+		this.scanner = scanner;
+		scanner.addListener(this);
+		this.printer = printer;
+		this.display = display;
+		
 		state = EBorrowState.CREATED;
 	}
 	
 	public void initialise() {
 		previous = display.getDisplay();
-		display.setDisplay((JPanel) ui, "Borrow UI");	
-		//setState(EBorrowState.INITIALIZED);
-		
+		display.setDisplay((JPanel) ui, "Borrow UI");		
+		setState(EBorrowState.INITIALIZED);
 	}
 	
 	public void close() {
@@ -67,85 +76,182 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	@Override
 	public void cardSwiped(int memberID) {
-		
-		state.equals(EBorrowState.INITIALIZED);
-		
-		borrower = memberDAO.getMemberByID(memberID);
-		
-		if (borrower == null){
-			ui.displayErrorMessage("field must be a postivie int");
-			return ;
+		System.out.println("cardSwiped: got " + memberID);
+		if (!state.equals(EBorrowState.INITIALIZED)) {
+			throw new RuntimeException(
+					String.format("BorrowUC_CTL : cardSwiped : illegal operation in state: %s", state));
 		}
-		if (borrower.hasOverDueLoans()) {
-			state.equals(EBorrowState.BORROWING_RESTRICTED);
-			ui.displayErrorMessage("Memeber is restricted");
+		borrower = memberDAO.getMemberByID(memberID);
+		if (borrower == null) {
+			ui.displayErrorMessage(String.format("Member ID %d not found", memberID));
 			return;
 		}
-		else{
-			state.equals(EBorrowState.SCANNING_BOOKS);
+		boolean overdue = borrower.hasOverDueLoans();
+		boolean atLoanLimit = borrower.hasReachedLoanLimit();
+		boolean hasFines = borrower.hasFinesPayable();
+		boolean overFineLimit = borrower.hasReachedFineLimit();
+		boolean borrowing_restricted = (overdue || atLoanLimit || overFineLimit);
+		
+		if (borrowing_restricted) {
+			setState(EBorrowState.BORROWING_RESTRICTED);
+		}
+		else {
+			setState(EBorrowState.SCANNING_BOOKS);
+		}
+
+		//display member details
+		int mID = borrower.getID();
+		String mName = borrower.getFirstName() + " " + borrower.getLastName();
+		String mContact = borrower.getContactPhone();
+		ui.displayMemberDetails(mID, mName, mContact);	
+		
+		if (hasFines) {
+			float amountOwing = borrower.getFineAmount();
+			ui.displayOutstandingFineMessage(amountOwing);
 		}
 		
+		if (overdue) {
+			ui.displayOverDueMessage();
+		}
 		
+		if (atLoanLimit) {
+			ui.displayAtLoanLimitMessage();
+		}
 		
-		throw new RuntimeException("Not implemented yet");
+		if (overFineLimit) {
+			System.out.println("State: " + state);
+			float amountOwing = borrower.getFineAmount();
+			ui.displayOverFineLimitMessage(amountOwing);
+		}
+		
+		//display existing loans
+		String loanString = buildLoanListDisplay(borrower.getLoans());
+		ui.displayExistingLoan(loanString);
 	}
 	
 	
 	
 	@Override
 	public void bookScanned(int barcode) {
+		System.out.println("bookScanned: got " + barcode);
+		if (state != EBorrowState.SCANNING_BOOKS) {
+			throw new RuntimeException(
+					String.format("BorrowUC_CTL : bookScanned : illegal operation in state: %s", state));			
+		}
+		ui.displayErrorMessage("");
 		
-	state.equals(EBorrowState.SCANNING_BOOKS);
+		IBook book = bookDAO.getBookByID(barcode);
+		if (book == null) {
+			ui.displayErrorMessage(String.format("Book %d not found", barcode));
+			return;
+		}
+
+		if (book.getState() != EBookState.AVAILABLE) {
+			ui.displayErrorMessage(String.format("Book %d is not available: %s", book.getID(), book.getState()));
+			return;
+		}
 		
+		if (bookList.contains(book)) {
+			ui.displayErrorMessage(String.format("Book %d already scanned: ", book.getID()));
+			return;
+		}
+
+		scanCount++;
+		bookList.add(book);
+		ILoan loan = loanDAO.createLoan(borrower, book);
+		loanList.add(loan);
+		
+		//display current book
+		ui.displayScannedBookDetails(book.toString());
+		
+		//display pending loans
+		ui.displayPendingLoan(buildLoanListDisplay(loanList));
+		
+		if (scanCount >= IMember.LOAN_LIMIT) {
+			setState(EBorrowState.CONFIRMING_LOANS);
+		}	
 	}
 
 	
 	public void setState(EBorrowState state) {
+		System.out.println("Setting state: " + state);
+		
 		this.state = state;
+		ui.setState(state);
+
+		switch (state) {
 		
-		if (state == EBorrowState.INITIALIZED){
+		case INITIALIZED:
 			reader.setEnabled(true);
 			scanner.setEnabled(false);
-		}
-		if (state == EBorrowState.SCANNING_BOOKS){
+			break;
+			
+		case SCANNING_BOOKS:
 			reader.setEnabled(false);
 			scanner.setEnabled(true);
-		}
-		if (state == EBorrowState.BORROWING_RESTRICTED || state == state.CONFIRMING_LOANS){
+			this.bookList = new ArrayList<IBook>();
+			this.loanList = new ArrayList<ILoan>();
+			scanCount = borrower.getLoans().size();
+			
+			//clear currentBook display
+			ui.displayScannedBookDetails("");			
+			//clear pending loan display
+			ui.displayPendingLoan("");			
+			break;
+			
+		case CONFIRMING_LOANS:
 			reader.setEnabled(false);
 			scanner.setEnabled(false);
-		}
-		else {
-			reader.setEnabled(true);
-			scanner.setEnabled(true);
+			//display pending loans
+			ui.displayConfirmingLoan(buildLoanListDisplay(loanList));
+			break;
 			
+		case COMPLETED:
+			reader.setEnabled(false);
+			scanner.setEnabled(false);
+			for (ILoan loan : loanList) {
+				loanDAO.commitLoan(loan);
+			}
+			printer.print(buildLoanListDisplay(loanList));
+			close();
+			break;
 			
+		case CANCELLED:
+			reader.setEnabled(false);
+			scanner.setEnabled(false);
+			close();
+			break;
+			
+		case BORROWING_RESTRICTED:
+			reader.setEnabled(false);
+			scanner.setEnabled(false);
+			ui.displayErrorMessage(String.format("Member %d cannot borrow at this time.", borrower.getID()));
+			break;
+			
+		default:
+			throw new RuntimeException("Unknown state");
 		}
-		
 	}
 
 	@Override
 	public void cancelled() {
-		close();
+		setState(EBorrowState.CANCELLED);
 	}
 	
 	@Override
 	public void scansCompleted() {
-		throw new RuntimeException("Not implemented yet");
+		setState(EBorrowState.CONFIRMING_LOANS);		
 	}
 
 	@Override
 	public void loansConfirmed() {
-		while (state == EBorrowState.CONFIRMING_LOANS && loanList.size() > 0 && loanList.size() < 5){
-			
-		}
+		setState(EBorrowState.COMPLETED);				
 	}
 
 	@Override
 	public void loansRejected() {
-		while (state == EBorrowState.CONFIRMING_LOANS && loanList.size() > 0){
-		
-		}
+		System.out.println("Loans Rejected");
+		setState(EBorrowState.SCANNING_BOOKS);		
 	}
 
 	private String buildLoanListDisplay(List<ILoan> loans) {

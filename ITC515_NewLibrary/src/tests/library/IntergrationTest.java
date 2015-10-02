@@ -34,7 +34,7 @@ import library.interfaces.hardware.IScanner;
 
 public class IntergrationTest {
 	
-    BorrowUC_CTL ctl_;
+    BorrowUC_CTL ctl;
     
     IScanner scanner;
     ICardReader reader;
@@ -63,7 +63,7 @@ public class IntergrationTest {
         memberDAO = new MemberMapDAO(new MemberHelper());
         loanDAO = new LoanMapDAO(new LoanHelper());
                 
-        ctl_ = new BorrowUC_CTL(reader, scanner, printer, display, bookDAO, loanDAO, memberDAO);
+        ctl = new BorrowUC_CTL(reader, scanner, printer, display, bookDAO, loanDAO, memberDAO);
         
         IBook book = bookDAO.addBook("Bob Jones", "Subject", "123456");
         
@@ -88,9 +88,9 @@ public class IntergrationTest {
     @Test
     public void testCardSwipedBorrowingEnabledNoFinesNoRestrictions() {
         
-        ctl_.setState(EBorrowState.INITIALIZED);
+        ctl.setState(EBorrowState.INITIALIZED);
         
-        ctl_.cardSwiped(1);
+        ctl.cardSwiped(1);
         
         verify(reader).setEnabled(false);
         verify(scanner).setEnabled(true);
@@ -99,7 +99,7 @@ public class IntergrationTest {
         verify(ui).displayExistingLoan(any(String.class));    
         
         //assert
-        assertEquals(EBorrowState.SCANNING_BOOKS, ctl_.getState());
+        assertEquals(EBorrowState.SCANNING_BOOKS, ctl.getState());
         
     }
 
