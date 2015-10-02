@@ -135,7 +135,7 @@ public class TestPath {
       
         verify(reader).setEnabled(false);
         verify(ui).setState(EBorrowState.BORROWING_RESTRICTED);
-        verify(ui).displayMemberDetails(3, "fName2 lName2", "0003");
+        verify(ui).displayMemberDetails(2, "fName2 lName2", "0003");
         verify(ui).displayOutstandingFineMessage(10.0f);
         verify(ui).displayOverFineLimitMessage(10.0f);  
         
@@ -155,7 +155,7 @@ public class TestPath {
         
         verify(reader).setEnabled(false);
         verify(ui).setState(EBorrowState.BORROWING_RESTRICTED);
-        verify(ui).displayMemberDetails(3, "fn", "3");
+        verify(ui).displayMemberDetails(2, "fn", "3");
         verify(ui).displayAtLoanLimitMessage();
         verify(ui).displayExistingLoan(any(String.class));
         
