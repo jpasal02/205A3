@@ -21,10 +21,10 @@ public class BookDAOTest {
 	BookDAO bookDao;
 	String name = "Bob";
 	String title = "Subject";
-	String callNo1 = "123456";
+	String callNo1 = "1";
 	String name1 = "Jones";
-	String title1 = "63333";
-	String callNo2 = "112121";
+	String title1 = "subject";
+	String callNo2 = "2";
 
 	@Before
 	public void setUp() {
@@ -161,8 +161,8 @@ public class BookDAOTest {
 	@Test
 	public void testListBooks() {
 
-		bookDao.addBook(name1, title, callNo1);
-		bookDao.addBook("jones", "", "");
+		this.bookDao.addBook(name1, title, callNo1);
+		this.bookDao.addBook("jones", "", "");
 
 		List<IBook> listBooks = bookDao.listBooks();
 
@@ -176,8 +176,8 @@ public class BookDAOTest {
 	@Test
 	public void testFindBooksByAuthor() {
 
-		bookDao.addBook("rob", "sub", "12");
-		bookDao.addBook("mary", "subb", "13");
+		this.bookDao.addBook("rob", "sub", "12");
+		this.bookDao.addBook("mary", "subb", "13");
 
 		List<IBook> listBooks = bookDao.findBooksByAuthor("rob");
 
@@ -192,8 +192,8 @@ public class BookDAOTest {
 	@Test
 	public void testFindBooksByTitle() {
 	
-		bookDao.addBook("rob", "sub", "12");
-		bookDao.addBook("mary", "subb", "13");
+		this.bookDao.addBook("rob", "sub", "12");
+		this.bookDao.addBook("mary", "subb", "13");
 
 		List<IBook> listBooks = bookDao.findBooksByTitle("subb");
 
@@ -207,8 +207,8 @@ public class BookDAOTest {
 	@Test
 	public void testFindBooksByAuthorTitle() {
 
-		bookDao.addBook("rob", "sub", "12");
-		bookDao.addBook("mary", "subb", "13");;
+		this.bookDao.addBook("rob", "sub", "12");
+		this.bookDao.addBook("mary", "subb", "13");;
 
 		List<IBook> listBooks = bookDao.findBooksByAuthorTitle("rob", "sub");
 
