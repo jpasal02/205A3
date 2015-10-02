@@ -20,6 +20,7 @@ import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import library.interfaces.hardware.IScannerListener;
+import library.panels.borrow.SwipeCardPanel;
 
 public class BorrowUC_CTL implements ICardReaderListener, 
 									 IScannerListener, 
@@ -66,16 +67,18 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	@Override
 	public void cardSwiped(int memberID) {
 		
-		state.equals(EBorrowState.INITIALIZED); 
+		state.equals(EBorrowState.INITIALIZED);
+		
 		borrower = memberDAO.getMemberByID(memberID);
 		
 		if (borrower == null){
 			ui.displayErrorMessage("field must be a postivie int");
-			return;
+			return ;
 		}
 		if (borrower.hasOverDueLoans()) {
 			state.equals(EBorrowState.BORROWING_RESTRICTED);
 			ui.displayErrorMessage("Memeber is restricted");
+			return;
 		}
 		else{
 			state.equals(EBorrowState.SCANNING_BOOKS);

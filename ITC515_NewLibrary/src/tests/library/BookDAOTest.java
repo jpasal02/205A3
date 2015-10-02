@@ -7,9 +7,11 @@ import library.entities.Book;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.internal.matchers.CompareTo;
 
 public class BookDAOTest {
@@ -52,10 +54,18 @@ public class BookDAOTest {
 	
 	@Test
 	public void testBookById() {
-		mockBook.equals(testingBook);
+		
+		int Id = 1; 
+				
+		IBook book = new Book ("Bob Jones","Subject","123456",4);
+		mockBook.addBook("Bob Jones","Subject","123456");
+		mockBook.getBookByID(Id);
+		book.getID();
+		
+		//mockBook.equals(testingBook);
 		
 		
-		assertEquals(mockBook.getBookByID(4), testingBook);
+		assertEquals(mockBook.getBookByID(Id), 7);
 		
 	}
 	
