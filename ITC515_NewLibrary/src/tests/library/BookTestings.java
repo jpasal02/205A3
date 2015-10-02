@@ -1,6 +1,7 @@
-package library.entities;
+package tests.library;
 
 import static org.junit.Assert.*;
+import library.entities.Book;
 import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;

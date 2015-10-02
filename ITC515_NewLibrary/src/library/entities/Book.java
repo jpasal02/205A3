@@ -41,7 +41,6 @@ public class Book implements IBook{
 		if (state != EBookState.AVAILABLE)
 			throw new RuntimeException ("");
 		
-		
 			state = EBookState.ON_LOAN;
 			this.loan = loan;
 	}

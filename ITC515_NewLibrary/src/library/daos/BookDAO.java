@@ -26,7 +26,7 @@ public class BookDAO implements IBookDAO{
 	
 	public IBook addBook(String author, String Title, String callNumber){
 		
-		IBook book = helper.makeBook(author, Title, callNumber, nextID++);
+		IBook book = helper.makeBook(author, Title, callNumber, nextID);
 		map.add(book);
 		return book;
 		
