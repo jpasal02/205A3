@@ -100,6 +100,7 @@ public class IntergrationTest {
         
         //assert
         assertEquals(EBorrowState.SCANNING_BOOKS, ctl_.getState());
+        
     }
 
 
