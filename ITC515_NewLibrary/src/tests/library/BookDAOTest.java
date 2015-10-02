@@ -55,17 +55,18 @@ public class BookDAOTest {
 	@Test
 	public void testBookById() {
 		
-		int Id = 1; 
+		
+		int Id = 7; 
 				
 		IBook book = new Book ("Bob Jones","Subject","123456",4);
 		mockBook.addBook("Bob Jones","Subject","123456");
 		mockBook.getBookByID(Id);
 		book.getID();
 		
-		//mockBook.equals(testingBook);
+		mockBook.equals(testingBook);
 		
 		
-		assertEquals(mockBook.getBookByID(Id), 7);
+		assertEquals(mockBook.getBookByID(7), 7);
 		
 	}
 	
