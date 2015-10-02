@@ -100,7 +100,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	}
 
 	
-	private void setState(EBorrowState state) {
+	public void setState(EBorrowState state) {
 		this.state = state;
 		
 		if (state == EBorrowState.INITIALIZED){
@@ -155,6 +155,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 			bld.append(ln.toString());
 		}
 		return bld.toString();		
+	}
+
+	public Object getState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
