@@ -38,7 +38,7 @@ public class Scanner extends JFrame implements IScanner {
 		getContentPane().add(panel);
 		panel.setLayout(null);
 		
-		JLabel lblErrorMesg = new JLabel("");
+		final JLabel lblErrorMesg = new JLabel("");
 		lblErrorMesg.setForeground(Color.RED);
 		lblErrorMesg.setBounds(12, 21, 358, 16);
 		panel.add(lblErrorMesg);
@@ -65,7 +65,7 @@ public class Scanner extends JFrame implements IScanner {
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (listener == null) {
-					throw new RuntimeException("Scanner: listener is null");
+					throw new RuntimeException("");
 				}
 				String text = textField.getText();
 				try {
@@ -76,8 +76,7 @@ public class Scanner extends JFrame implements IScanner {
 					listener.bookScanned(barcode);
 				}
 				catch (NumberFormatException e) {
-					//e.printStackTrace(System.err);
-					lblErrorMesg.setText("Book barcode must be a positive intger");
+					lblErrorMesg.setText("Barcode must be a positive intger");
 				}
 				textField.setText("");
 			}
